@@ -1,6 +1,7 @@
 package com.dist.roundsimageloadertask.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,6 +10,7 @@ import com.dist.roundsimageloadertask.databinding.ActivityMainBinding
 import com.dist.image_loader_lib.image_loader.ImageCacheImpl
 import com.dist.image_loader_lib.image_loader.ImageLoaderImpl
 import com.dist.image_loader_lib.image_loader.ImageLoaderProvider
+import com.dist.roundsimageloadertask.core.showToast
 import com.dist.roundsimageloadertask.presentation.list.ImageListAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun renderError(messageRes: Int) {
-        //TODO show toast/snack message
+        showToast(messageRes)
     }
 
     private fun renderSuccessState(imageDetails: List<ImageData>) {
