@@ -3,6 +3,7 @@ package com.dist.image_loader_lib.image_loader
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -34,7 +35,7 @@ class ImageCacheImpl(private val scope: CoroutineScope, private val context: Con
             cache[imageShaHash] = imageFile
         } catch (e: IOException) {
             e.printStackTrace()
-            //TODO handle exception if needed do cleanup
+            imageFile.delete()
             return false
         }
         return true
@@ -55,6 +56,7 @@ class ImageCacheImpl(private val scope: CoroutineScope, private val context: Con
         if (!cacheDirectory.exists()) {
             val directoryCreated = cacheDirectory.mkdirs()
             if (!directoryCreated) {
+                Log.e("ImageCache-Dist", "directory not created")
                 //TODO log directory not created error
             }
         }
@@ -63,29 +65,31 @@ class ImageCacheImpl(private val scope: CoroutineScope, private val context: Con
     }
 
     private fun fetchCachedIfAny(context: Context) {
-        val cacheDirectory = File(context.cacheDir, CACHE_DIR_NAME)
-
-        if (cacheDirectory.exists() && cacheDirectory.isDirectory) {
-            val cachedFiles = cacheDirectory.listFiles()
-
-            cachedFiles?.forEach { file ->
-                if (file.isFile) {
-                    cache[file.name] = file
-                }
+        val cacheDirectory = getImageCacheDirOrNull()
+        val cachedFiles = cacheDirectory?.listFiles()
+        cachedFiles?.forEach { file ->
+            if (file.isFile) {
+                cache[file.name] = file
             }
         }
     }
 
     override fun invalidateCache() {
         scope.launch {
-            val cacheDirectory = File(context.cacheDir, CACHE_DIR_NAME)
-            if (cacheDirectory.exists() && cacheDirectory.isDirectory) {
-                val cachedFiles = cacheDirectory.listFiles()
-
-                cachedFiles?.forEach { file ->
-                    file.delete()
-                }
+            val cacheDirectory = getImageCacheDirOrNull()
+            val cachedFiles = cacheDirectory?.listFiles()
+            cachedFiles?.forEach { file ->
+                file.delete()
             }
+        }
+    }
+
+    private fun getImageCacheDirOrNull() : File? {
+        val cacheDirectory = File(context.cacheDir, CACHE_DIR_NAME)
+        return if (cacheDirectory.exists() && cacheDirectory.isDirectory) {
+            cacheDirectory
+        } else {
+            null
         }
     }
 

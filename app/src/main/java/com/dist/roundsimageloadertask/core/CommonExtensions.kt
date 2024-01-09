@@ -7,3 +7,5 @@ import androidx.annotation.StringRes
 fun Context.showToast(@StringRes messageRes: Int) {
     Toast.makeText(applicationContext, messageRes, Toast.LENGTH_SHORT).show()
 }
+
+inline fun <reified T : Any> simpleName() = T::class.java.simpleName
