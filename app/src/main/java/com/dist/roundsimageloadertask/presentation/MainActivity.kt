@@ -47,9 +47,13 @@ class MainActivity : AppCompatActivity() {
         when (state) {
             is MainViewModel.MainViewState.Error.ServerError -> renderError(state.messageRes)
             is MainViewModel.MainViewState.ImageDetailsSuccess -> renderSuccessState(state.imageDetails)
-            is MainViewModel.MainViewState.Loading -> TODO()
+            is MainViewModel.MainViewState.Loading -> renderLoading()
             is MainViewModel.MainViewState.InvalidateImageCache -> doInvalidateImageCache(state.imageDetails)
         }
+    }
+
+    private fun renderLoading() {
+        //TODO implement some kind of loader
     }
 
     private fun renderError(messageRes: Int) {
